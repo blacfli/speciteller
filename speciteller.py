@@ -1,4 +1,5 @@
-## Author: Jessy Li (ljunyi@seas.upenn.edu)
+
+# coding: utf-8
 
 import argparse
 import liblinearutil as ll
@@ -8,8 +9,7 @@ import sys
 from features import Space
 from generatefeatures import ModelNewText
 
-# RT = "./"
-RT = "/nlp/users/ljunyi/projects/speciteller/"
+RT = "./"
 
 BRNCLSTSPACEFILE = RT+"cotraining_models/brnclst1gram.space"
 SHALLOWSCALEFILE = RT+"cotraining_models/shallow.scale"
@@ -86,7 +86,7 @@ def writeSpecificity(preds, outf):
         for x in preds:
             f.write("%f\n" % x)
         f.close()
-    print "Output to "+outf+" done."
+    print("Output to "+outf+" done.")
 
 def run(identifier, sentlist):
     ## main function to run speciteller and return predictions
@@ -117,3 +117,4 @@ if __name__ == "__main__":
     if args.write_all_preds:
         writeSpecificity(preds_s,args.outputfile+".s")
         writeSpecificity(preds_w,args.outputfile+".w")
+

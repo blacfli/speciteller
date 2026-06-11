@@ -1,4 +1,5 @@
-## Author: Jessy Li (ljunyi@seas.upenn.edu)
+
+# coding: utf-8
 
 from collections import namedtuple, defaultdict
 from numpy import mean, zeros
@@ -7,8 +8,11 @@ import utils
 
 STOPWORDS = utils.readStopwords()
 
+
+
 def sentLen(sentlst):
     return [t.getNumTokens() for t in sentlst]
+
 
 def numCapLetters(sentlst, normalize):
     ret = []
@@ -16,6 +20,8 @@ def numCapLetters(sentlst, normalize):
         v = len([x for x in t.getStr() if x.isupper()])
         ret.append((v+0.0)/t.getNumTokens() if normalize else v)
     return ret
+
+
 
 def numNumbers(sentlst, normalize):
     ret = []
@@ -230,3 +236,8 @@ class RawSent:
 
     def __repr__(self):
         return self.getStr()
+
+
+
+
+

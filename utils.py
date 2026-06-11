@@ -1,4 +1,6 @@
-## Author: Jessy Li (ljunyi@seas.upenn.edu)
+
+# coding: utf-8
+
 
 from collections import namedtuple, Counter
 from math import log
@@ -6,9 +8,8 @@ import os
 import gzip
 import numpy as np
 
-# RT = "./"
-RT = "/nlp/users/ljunyi/projects/speciteller/"
 
+RT = "./"
 MPQAFILE = RT+"resources/subjclueslen1-HLTEMNLP05.tff"
 MRCFILE = RT+"resources/mrc2.dct"
 GENINQFILE = RT+"resources/inquirerTags.txt"
@@ -19,7 +20,7 @@ IDF_FILE = RT+"data/nyt2006.idf.txt"
 IDF_FILE2 = RT+"data/nyt2006.idf.lower.txt"
 STOPWORDFILE = RT+"data/nltkstopwords.txt"
 
-SrilmInfo = namedtuple("SrilmInfo","sentid,logprob,ppl,ppl1,noovs,nzeroprobs,nwords,nsents")
+
 
 def readPdtbConns():
     conns = set()
@@ -28,6 +29,7 @@ def readPdtbConns():
             conns.add(line.strip())
         f.close()
     return conns
+
 
 def readMpqa():
     MPQAEntry = namedtuple("MPQAEntry","isstem,subj,polarity")
@@ -41,6 +43,8 @@ def readMpqa():
             ret[fields[2]] = entry
     return ret
 
+
+
 def readGenInq():
     inq_dict = {}
     for line in open(GENINQFILE, 'r'):
@@ -52,28 +56,33 @@ def readGenInq():
         inq_dict[word] = (max(stmt['Pos'], stmt['Pstv']), max(stmt['Neg'], stmt['Ngtv']), stmt['Strng'], stmt['Weak'])      
     return inq_dict
 
+
 def readMetaOptimizeBrownCluster():
-    print "loading brown clusters..."
+    print ("loading brown clusters...")
     word_cluster_d = {}
     with open(BROWNCLUSFILE) as f:
         for line in f:
             bitstr,word,numocc = line.strip().split("\t")
             word_cluster_d[word] = bitstr
-    print "done; # words: ", len(word_cluster_d)
+    print("done; # words: ", len(word_cluster_d))
     return word_cluster_d
 
+
 def readMetaOptimizeEmbeddings():
-    print "loading word embeddings..."
+    print ("loading word embeddings...")
     f = gzip.open(NEURALVECFILE,'rb')
     embdict = {}
     counter = 0
     for line in f:
-        fields = line.strip().split(" ")
+        fields = line.decode('utf8').strip().split(" ")
         embdict[fields[0]] = np.array([float(x) for x in fields[1:]])
         counter += 1
     f.close()
-    print "done; # words: ", counter
+    print ("done; # words: ", counter)
     return embdict
+
+
+
 
 def readMrc():
     ## export original mrc as only the following fields (starting from 0):
@@ -94,28 +103,33 @@ def readMrc():
             mrcdict[word] = MRCEntry(fami, conc, img, mcolo, mpavlo)
     return mrcdict
 
+
+
+
 def readIdfFile(filename):
-    d = {}; doccount = 0
+    d = {}; doc_count = 58307
     with open(filename) as f:
-        i = 0
-        for line in f:
-            if i == 0:
-                doccount = int(line.strip().split(": ")[1])
-                i += 1
-            elif i == 1:
-                i += 1
-            else:
-                word,df,idf = line.strip().split()
-                if not word.isalpha(): continue
-                d[word] = float(idf)
-        f.close()
-    return d,doccount
+        lines = f.readlines()
+        lines = lines[2:]
+        for i in range(len(lines)):
+            word,df,idf = lines[i].split("\t")
+            idf = idf[:-1]
+            if not word.isalpha():
+                continue
+            d[word] = float(idf)
+    return d,doc_count
+
+
+
 
 def readIdf():
     idfd,dct = readIdfFile(IDF_FILE)
     idflowerd,dct = readIdfFile(IDF_FILE2)
     default_oov = log(dct+0.0)
     return idfd, idflowerd, default_oov
+
+
+
 
 def readStopwords():
     ret = set()
@@ -126,4 +140,8 @@ def readStopwords():
                 ret.add(l)
         f.close()
     return ret
+
+
+
+
 

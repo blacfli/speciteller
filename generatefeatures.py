@@ -1,7 +1,5 @@
-## Author: Jessy Li (ljunyi@seas.upenn.edu)
 
-## given raw text files, generate features for
-## shallow and neuralbrn classifiers
+# coding: utf-8
 
 from collections import namedtuple
 import os.path
@@ -71,6 +69,7 @@ class ModelNewText(object):
         keys = ["neuralvec-"+str(i) for i in range(100)]
         if keys[0] not in self.featurestest:
             feats = features.neuralvec(self.embeddings,[r.rawsent for r in self.test])
+            feats = list(feats)
             for i,key in enumerate(keys):
                 self.featurestest[key] = feats[i]
 
@@ -87,7 +86,7 @@ class ModelNewText(object):
 
     def transformShallow(self):
         ys = [x.label for x in self.test]
-        xs = [{} for i in xrange(len(self.test))]
+        xs = [{} for i in range(len(self.test))]
         fnames = ["sentlen","numnumbers","numcapltrs","numsymbols","avgwordlen","numconns","fracstopwords","mpqageninq-subj","mpqageninq-polarity","mrc-fami","mrc-img","idf-min","idf-max","idf-avg"]
         for fid,fname in enumerate(fnames):
             for i,item in enumerate(self.featurestest[fname]):
@@ -97,7 +96,7 @@ class ModelNewText(object):
     def transformWordRep(self):
         neuralvec_start = 1
         ys = [x.label for x in self.test]
-        xs = [{} for i in xrange(len(self.test))]
+        xs = [{} for i in range(len(self.test))]
         for j in range(100):
             fname = "neuralvec-"+str(j)
             for i,item in enumerate(self.featurestest[fname]):
@@ -105,3 +104,7 @@ class ModelNewText(object):
         for i,item in enumerate(self.featurestest["brnclst1gram"]):
             xs[i].update(self.brnspace.toFeatDict(item,False))
         return ys,xs
+
+
+
+
